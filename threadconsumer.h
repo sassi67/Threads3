@@ -21,7 +21,7 @@ public slots:
 private:
     volatile bool m_Stopped;
 private slots:
-    void Started();
+    void Reset();
 };
 
 #endif // THREADCONSUMER_H

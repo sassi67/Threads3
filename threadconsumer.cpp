@@ -6,12 +6,13 @@ ThreadConsumer::ThreadConsumer(QObject *parent) :
     QThread(parent),
     m_Stopped(false)
 {
-    connect(this, SIGNAL(started()), this, SLOT(Started()));
+    connect(this, SIGNAL(started()), this, SLOT(Reset()));
+    connect(this, SIGNAL(finished()), this, SLOT(Reset()));
 }
 
 void ThreadConsumer::run()
 {
-    forever
+    while (!m_Stopped)
     {
         // this ensures that we will exit this loop
         // whether the button stop is clicked
@@ -21,12 +22,17 @@ void ThreadConsumer::run()
 
         if (BufferShared::AcquireSemPop())
         {
-            QString msg = tr("Consumer: %1").arg(BufferShared::GetInstance()->getStringFromBuffer());
-            //qDebug() << msg;
-            emit onUpdCons(msg);
+            if (m_Stopped)
+                break;
 
+            QString msg = tr("Consumer: %1").arg(BufferShared::GetInstance()->getStringFromBuffer());
             BufferShared::ReleaseSemPush();
+
+            emit onUpdCons(msg);
         }
+
+        if (m_Stopped)
+            break;
 
         msleep(50);
     }
@@ -41,7 +47,7 @@ void ThreadConsumer::Stop()
     BufferShared::ReleaseSemPop();
 }
 
-void ThreadConsumer::Started()
+void ThreadConsumer::Reset()
 {
     m_Stopped = false;
 }

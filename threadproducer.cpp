@@ -7,8 +7,8 @@ ThreadProducer::ThreadProducer(QObject *parent) :
     m_Stopped(false),
     m_IntToPrint(0)
 {
-    connect(this, SIGNAL(started()), this, SLOT(Started()));
-//    connect(this, SIGNAL(finished()), this, SLOT(Stop()));
+    connect(this, SIGNAL(started()), this, SLOT(Reset()));
+    connect(this, SIGNAL(finished()), this, SLOT(Reset()));
 }
 
 void ThreadProducer::run()
@@ -18,8 +18,8 @@ void ThreadProducer::run()
         // this ensures that we will exit this loop
         // whether the button stop is clicked
         // or the main window is closed
-//        if (m_Stopped)
-//            break;
+        if (m_Stopped)
+            break;
 
         if (BufferShared::AcquireSemPush())
         {
@@ -28,13 +28,13 @@ void ThreadProducer::run()
 
             QString msg = tr("Producer: index: %1").arg(QString::number(GetIntToPrint()));
             BufferShared::GetInstance()->setStringInBuffer(msg);
-            //qDebug() << msg;
             BufferShared::ReleaseSemPop();
+
             emit onUpdProd(msg);
         }
 
-//        if (m_Stopped)
-//            break;
+        if (m_Stopped)
+            break;
 
         msleep(50);
     }
@@ -55,7 +55,7 @@ int ThreadProducer::GetIntToPrint()
     return m_IntToPrint++;
 }
 
-void ThreadProducer::Started()
+void ThreadProducer::Reset()
 {
     m_Stopped = false;
 }

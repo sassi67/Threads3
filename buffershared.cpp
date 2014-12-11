@@ -17,6 +17,7 @@ void BufferShared::setStringInBuffer(const QString &s)
 {
     if (m_IndexSet == BUFFER_SIZE)
         m_IndexSet = 0;
+
     m_Buffer[m_IndexSet++] = s;
 }
 
@@ -24,9 +25,7 @@ QString BufferShared::getStringFromBuffer()
 {
     if (m_IndexGet == BUFFER_SIZE)
         m_IndexGet = 0;
-//    QString msg = QString("Buffer position: %1 -- %2")
-//                .arg(QString::number(m_IndexGet))
-//                .arg(m_Buffer[m_IndexGet++]);
+
     return m_Buffer[m_IndexGet++];
 }
 

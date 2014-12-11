@@ -25,7 +25,7 @@ private:
 
     int GetIntToPrint();
 private slots:
-    void Started();
+    void Reset();
 };
 
 #endif // THREADPRODUCER_H
